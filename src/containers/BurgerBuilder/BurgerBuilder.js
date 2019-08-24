@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Auxiliary from "../../hoc/Auxiliary";
+import Auxiliary from "../../hoc/Auxiliary/Auxiliary";
 import Burger from "../../components/Burger/Burger";
 import BuildControls from "../../components/Burger/BuildControls/BuildControls";
 import Modal from "../../components/UI/Modal/Modal";
@@ -13,6 +13,8 @@ const INGREDIENT_PRICES = {
   meat: 0.7
 };
 
+//Places where we change state alot is the same place where we should check for eficiency.
+
 class BurgerBuilder extends Component {
   // We create a class because we want to manage the component
 
@@ -23,6 +25,7 @@ class BurgerBuilder extends Component {
       salad: 0,
       bacon: 0,
       cheese: 0,
+      tomato: 0,
       meat: 0
     },
     totalPrice: 4,
@@ -50,7 +53,6 @@ class BurgerBuilder extends Component {
     };
 
     updatedIngredients[type] = updatedCount;
-    console.log(updatedIngredients[type]);
 
     const currentPrice = this.state.totalPrice;
     const updatedPrice = INGREDIENT_PRICES[type] + currentPrice;
@@ -65,6 +67,7 @@ class BurgerBuilder extends Component {
     if (this.state.ingredients[type] <= 0) {
       return;
     }
+   
     const updatedCount = this.state.ingredients[type] - 1;
     const updatedIngredients = {
       ...this.state.ingredients
@@ -81,17 +84,30 @@ class BurgerBuilder extends Component {
     this.updatePurchaseState(updatedIngredients);
   };
 
-  purchaseHandler = () => { //If this method is triggered through an event, you want to set the method like JS6.
-    this.setState({purchasing: true});
+  clearOrderHandler = () => {
+    const clearOrder =
+      this.state.ingredients["salad"] - this.state.ingredients["salad"];
+
+    this.updatePurchaseState(clearOrder);
+    this.setState({
+     ingredients: 0,
+    totalPrice: 4
+    });
+    console.log(this.state);
+  };
+
+  purchaseHandler = () => {
+    //If this method is triggered through an event, you want to set the method like JS6.
+    this.setState({ purchasing: true });
   };
 
   purchaseCancelHandler = () => {
-    this.setState({purchasing: false});
-  }
+    this.setState({ purchasing: false });
+  };
 
   purchaseContinueHandler = () => {
-    alert('Continued');
-  }
+    alert("Continued");
+  };
 
   render() {
     const disabledInfo = {
@@ -105,8 +121,16 @@ class BurgerBuilder extends Component {
 
     return (
       <Auxiliary>
-        <Modal show = {this.state.purchasing} modalClosed = {this.purchaseCancelHandler}>
-          <OrderSummary ingredients={this.state.ingredients} cancelled = {this.purchaseCancelHandler} continue = {this.purchaseContinueHandler} price = {this.state.totalPrice}/>
+        <Modal
+          show={this.state.purchasing}
+          modalClosed={this.purchaseCancelHandler}
+        >
+          <OrderSummary
+            ingredients={this.state.ingredients}
+            cancelled={this.purchaseCancelHandler}
+            continue={this.purchaseContinueHandler}
+            price={this.state.totalPrice}
+          />
         </Modal>
         <Burger ingredients={this.state.ingredients} />
         <BuildControls
@@ -115,7 +139,8 @@ class BurgerBuilder extends Component {
           disabled={disabledInfo}
           price={this.state.totalPrice}
           purchaseable={this.state.purchaseable}
-          ordered = {this.purchaseHandler}
+          ordered={this.purchaseHandler}
+          clearOrder={this.clearOrderHandler}
         />
       </Auxiliary>
     );

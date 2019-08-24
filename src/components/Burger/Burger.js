@@ -21,7 +21,6 @@ const burger = props => {
     .reduce((arr, el) => { //arr represents the inital value or the previously returned value of the function. The current val = el. Both of these are required to use reduce. 
       return arr.concat(el) //concat merges the 2 arrays into 1. 
     }, []);
-    console.log(transformedIngredients);
 
     if (transformedIngredients.length === 0){
       transformedIngredients = <p>Please enter some ingredients.</p>
